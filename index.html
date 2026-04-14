@@ -1212,19 +1212,27 @@
 
     renderCatalog();
     renderCart();
- async function checkout() {
+async function checkout() {
   if (!cart.length) {
     alert("Корзина пустая");
     return;
   }
 
   const payload = {
-    items: cart,
+    customerName: document.getElementById("customerName").value.trim() || "Не указано",
+    customerContact: document.getElementById("customerContact").value.trim() || "Не указано",
+    customerComment: document.getElementById("customerComment").value.trim() || "Без комментария",
+    items: cart.map(item => ({
+      name: item.name,
+      size: item.option || item.size || "Не указано",
+      qty: item.qty,
+      priceRub: item.priceRub
+    })),
     total: cart.reduce((sum, i) => sum + i.priceRub * i.qty, 0)
   };
 
   try {
-    await fetch("https://onyx-shop-backend.onrender.com/api/order", {
+    const response = await fetch("https://onyx-shop-backend.onrender.com/api/order", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -1232,12 +1240,21 @@
       body: JSON.stringify(payload)
     });
 
+    const result = await response.json();
+
+    if (!response.ok || !result.ok) {
+      throw new Error("Ошибка отправки");
+    }
+
     alert("Заказ отправлен ✅");
 
     cart = [];
+    document.getElementById("customerName").value = "";
+    document.getElementById("customerContact").value = "";
+    document.getElementById("customerComment").value = "";
     renderCart();
-
   } catch (e) {
+    console.error(e);
     alert("Ошибка отправки ❌");
   }
 }
