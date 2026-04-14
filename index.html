@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Onyx Shop</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body style="background:black;color:white;font-family:sans-serif;padding:20px;">
+
+<h1>Onyx Shop</h1>
+
+<button onclick="buy('Футболка', 1500)">Футболка — 1500₽</button><br><br>
+<button onclick="buy('Худи', 3000)">Худи — 3000₽</button><br><br>
+
+<script>
+const tg = window.Telegram.WebApp;
+tg.expand();
+
+function buy(name, price) {
+  const data = {
+    product: name,
+    price: price
+  };
+  tg.sendData(JSON.stringify(data));
+}
+</script>
+
+</body>
+</html>
