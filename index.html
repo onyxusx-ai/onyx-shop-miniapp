@@ -1212,6 +1212,35 @@
 
     renderCatalog();
     renderCart();
-  </script>
+ async function checkout() {
+  if (!cart.length) {
+    alert("Корзина пустая");
+    return;
+  }
+
+  const payload = {
+    items: cart,
+    total: cart.reduce((sum, i) => sum + i.priceRub * i.qty, 0)
+  };
+
+  try {
+    await fetch("https://onyx-shop-backend.onrender.com/api/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    alert("Заказ отправлен ✅");
+
+    cart = [];
+    renderCart();
+
+  } catch (e) {
+    alert("Ошибка отправки ❌");
+  }
+}
+</script>
 </body>
 </html>
